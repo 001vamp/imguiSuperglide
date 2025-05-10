@@ -9,6 +9,9 @@
 #include "TrainerLogic.h"
 #include <memory>
 
+// Forward declaration for RenderDebugOverlay
+void RenderDebugOverlay();
+
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "user32.lib")
@@ -27,6 +30,7 @@ void CleanupDeviceD3D();
 void CreateRenderTarget();
 void CleanupRenderTarget();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+void RenderDebugOverlay();
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -75,7 +79,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
     ImGuiStyle& style = ImGui::GetStyle();
     ImVec4 purple = ImVec4(0.45f, 0.25f, 0.75f, 1.0f);
     ImVec4 purpleAccent = ImVec4(0.60f, 0.35f, 0.90f, 1.0f);
-    ImVec4 bgDark = ImVec4(0.10f, 0.08f, 0.15f, 1.0f);
+    ImVec4 bgDark = ImVec4(0.10f, 0.08f, 0.15f, 0.0f);
     ImVec4 transparent = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
     style.Colors[ImGuiCol_WindowBg] = bgDark;
     style.Colors[ImGuiCol_ChildBg] = bgDark;
@@ -168,7 +172,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
         window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
         ImGui::PushStyleColor(ImGuiCol_WindowBg, transparent);
         ImGui::Begin("DockSpace Demo", nullptr, window_flags);
 
@@ -193,7 +197,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
         if (showSettings) {
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(18, 14));
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.0f);
-            ImGui::Begin("Settings", &showSettings, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse);
+            ImGui::Begin("Settings", &showSettings, ImGuiWindowFlags_NoCollapse);
             ImGui::TextColored(purpleAccent, "Key Bindings:");
             ImGui::Separator();
             ImGui::Text("Jump: %s", jumpKey ? jumpKeyName : "Not set");
@@ -253,7 +257,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
         // Superglide Trainer window (top-level)
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(24, 18));
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 12.0f);
-        ImGui::Begin("Superglide Trainer", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse);
+        ImGui::Begin("Superglide Trainer", nullptr, ImGuiWindowFlags_NoCollapse);
         ImGui::PushFont(NULL);
         ImGui::TextColored(purpleAccent, "Status: %s", running ? "Running" : "Stopped");
         ImGui::Text("Jump Key: %s", jumpKey ? jumpKeyName : "Not set");
@@ -289,7 +293,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 
         // Rendering
         ImGui::Render();
-        const float clear_color_with_alpha[4] = { 0.45f, 0.55f, 0.60f, 1.00f };
+        const float clear_color_with_alpha[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
         g_pd3dDeviceContext->OMSetRenderTargets(1, &g_mainRenderTargetView, NULL);
         g_pd3dDeviceContext->ClearRenderTargetView(g_mainRenderTargetView, clear_color_with_alpha);
         ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());

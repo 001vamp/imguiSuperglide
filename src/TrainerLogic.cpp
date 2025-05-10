@@ -208,7 +208,7 @@ void TrainerLogic::Update(InputHandler& input) {
 
 void TrainerLogic::RenderUI() {
     ImGui::SetNextWindowBgAlpha(0.8f);
-    ImGui::Begin("Superglide Trainer", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::Begin("Superglide Trainer", nullptr, ImGuiWindowFlags_NoCollapse);
     ImGui::Text("Superglide Count: %d", m_superglideCount);
     if (m_awaitingFPS) {
         static char fpsBuf[16] = "";
