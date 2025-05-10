@@ -1,16 +1,14 @@
 # ninja log v6
-6	1277	7685797072648977	CMakeFiles/SuperglideTrainer.dir/src/InputHandler.cpp.obj	6cbb2884dd9ecc7d
+9	1545	7686114613197042	CMakeFiles/SuperglideTrainer.dir/src/InputHandler.cpp.obj	6cbb2884dd9ecc7d
 10	1590	7685776367786438	CMakeFiles/SuperglideTrainer.dir/src/imgui_draw.cpp.obj	f6241a5639ab9a4e
 16	1147	7685776367846889	CMakeFiles/SuperglideTrainer.dir/src/imgui_demo.cpp.obj	99e8d498e8371635
 18	1196	7685776367876887	CMakeFiles/SuperglideTrainer.dir/src/imgui_impl_win32.cpp.obj	5370db036bbe9b58
-2244	2476	7686101204125896	SuperglideTrainer.exe	ef9a6eb36b9ac196
+1898	2106	7686114632093797	SuperglideTrainer.exe	ef9a6eb36b9ac196
 14	1246	7685776367826884	CMakeFiles/SuperglideTrainer.dir/src/imgui_tables.cpp.obj	8fe992987417801d
 8	2543	7685776367776440	CMakeFiles/SuperglideTrainer.dir/src/imgui.cpp.obj	600afdfef0ccfa56
 21	1647	7685776367911989	CMakeFiles/SuperglideTrainer.dir/src/imgui_impl_dx11.cpp.obj	cf35a7c7ffe0b140
-8	1276	7685797072658978	CMakeFiles/SuperglideTrainer.dir/src/TrainerLogic.cpp.obj	e643671aecf35e10
-5	2243	7686101181739576	CMakeFiles/SuperglideTrainer.dir/src/main.cpp.obj	9d976f3a4307c534
+11	1650	7686114613216940	CMakeFiles/SuperglideTrainer.dir/src/TrainerLogic.cpp.obj	e643671aecf35e10
+6	1898	7686114613166998	CMakeFiles/SuperglideTrainer.dir/src/main.cpp.obj	9d976f3a4307c534
 11	1733	7685776367806805	CMakeFiles/SuperglideTrainer.dir/src/imgui_widgets.cpp.obj	c47aa2251e2301bd
-8	1857	7686103252306893	CMakeFiles/SuperglideTrainer.dir/src/InputHandler.cpp.obj	6cbb2884dd9ecc7d
-11	1871	7686103252341968	CMakeFiles/SuperglideTrainer.dir/src/TrainerLogic.cpp.obj	e643671aecf35e10
-5	2273	7686103252276895	CMakeFiles/SuperglideTrainer.dir/src/main.cpp.obj	9d976f3a4307c534
-2274	2513	7686103274956173	SuperglideTrainer.exe	ef9a6eb36b9ac196
+5	1611	7686117609348402	CMakeFiles/SuperglideTrainer.dir/src/TrainerLogic.cpp.obj	e643671aecf35e10
+1612	1802	7686117625410025	SuperglideTrainer.exe	ef9a6eb36b9ac196

@@ -1,0 +1,60 @@
+State: 0, vkCode: 32, pressed: 1, sysTime: 61600687
+Feedback: Climb started. Now attempt the superglide!
+State: 0, vkCode: 160, pressed: 1, sysTime: 61600781
+Feedback: Jump and Crouch pressed together! Try to press jump first, then crouch.
+State: 0, vkCode: 32, pressed: 1, sysTime: 61602312
+Feedback: Awaiting Crouch...
+State: 1, vkCode: 160, pressed: 1, sysTime: 61602343
+Feedback: Crouched too late by 0.02604 seconds.
+State: 0, vkCode: 32, pressed: 1, sysTime: 61603781
+Feedback: Climb started. Now attempt the superglide!
+State: 0, vkCode: 160, pressed: 1, sysTime: 61604171
+Feedback: Jump and Crouch pressed together! Try to press jump first, then crouch.
+State: 0, vkCode: 32, pressed: 1, sysTime: 61605515
+Feedback: Awaiting Crouch...
+State: 1, vkCode: 160, pressed: 1, sysTime: 61605671
+Feedback: Crouched too late by 0.15357 seconds.
+State: 0, vkCode: 32, pressed: 1, sysTime: 61612875
+Feedback: Climb started. Now attempt the superglide!
+State: 0, vkCode: 160, pressed: 1, sysTime: 61613125
+Feedback: Jump and Crouch pressed together! Try to press jump first, then crouch.
+State: 0, vkCode: 32, pressed: 1, sysTime: 61614859
+Feedback: Awaiting Crouch...
+State: 1, vkCode: 32, pressed: 1, sysTime: 61615484
+Feedback: Warning: Multiple jumps detected, results may not reflect ingame behavior.
+State: 2, vkCode: 160, pressed: 1, sysTime: 61615515
+Feedback: Double jump input, resetting.
+State: 0, vkCode: 32, pressed: 1, sysTime: 61616453
+Feedback: Climb started. Now attempt the superglide!
+State: 0, vkCode: 32, pressed: 1, sysTime: 61616765
+Feedback: Awaiting Crouch...
+State: 1, vkCode: 160, pressed: 1, sysTime: 61616796
+Feedback: Crouched too late by 0.03085 seconds.
+State: 0, vkCode: 32, pressed: 1, sysTime: 61617843
+Feedback: Climb started. Now attempt the superglide!
+State: 0, vkCode: 160, pressed: 1, sysTime: 61618171
+Feedback: Crouch pressed before jump. Try to press jump first, then crouch.
+State: 0, vkCode: 32, pressed: 1, sysTime: 61618203
+Feedback: Awaiting Crouch...
+State: 0, vkCode: 32, pressed: 1, sysTime: 61989187
+Feedback: Climb started. Now attempt the superglide!
+State: 0, vkCode: 160, pressed: 1, sysTime: 61989218
+Feedback: Jump and Crouch pressed together! Try to press jump first, then crouch.
+State: 0, vkCode: 32, pressed: 1, sysTime: 61991218
+Feedback: Awaiting Crouch...
+State: 1, vkCode: 160, pressed: 1, sysTime: 61991250
+Feedback: Crouched too late by 0.02635 seconds.
+State: 0, vkCode: 32, pressed: 1, sysTime: 61993234
+Feedback: Climb started. Now attempt the superglide!
+State: 0, vkCode: 160, pressed: 1, sysTime: 61993281
+Feedback: Jump and Crouch pressed together! Try to press jump first, then crouch.
+State: 0, vkCode: 32, pressed: 1, sysTime: 61995093
+Feedback: Awaiting Crouch...
+State: 1, vkCode: 160, pressed: 1, sysTime: 61995609
+Feedback: Crouched too late by 0.50530 seconds.
+State: 0, vkCode: 32, pressed: 1, sysTime: 61995625
+Feedback: Climb started. Now attempt the superglide!
+State: 0, vkCode: 160, pressed: 1, sysTime: 61997671
+Feedback: Crouch pressed before jump. Try to press jump first, then crouch.
+State: 0, vkCode: 32, pressed: 1, sysTime: 61997671
+Feedback: Awaiting Crouch...

@@ -30,6 +30,7 @@ public:
     bool PopEvent(KeyEvent& evt);
 
     bool IsJumpKeyHeld() const { return m_jumpKeyHeld; }
+    bool IsCrouchKeyHeld() const { return m_crouchKeyHeld; }
 
 private:
     static LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam);

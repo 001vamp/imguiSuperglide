@@ -3,9 +3,29 @@
 #include <sstream>
 #include <iomanip>
 #include <fstream>
+#include <deque>
+
+// For on-screen debug overlay
+static std::deque<std::string> g_debugLog;
+static void AddDebugLog(const std::string& msg) {
+    g_debugLog.push_back(msg);
+    if (g_debugLog.size() > 10) g_debugLog.pop_front();
+}
+void RenderDebugOverlay() {
+    ImGui::SetNextWindowBgAlpha(0.7f);
+    if (ImGui::Begin("Debug Log", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse)) {
+        for (const auto& line : g_debugLog) {
+            ImGui::TextWrapped("%s", line.c_str());
+        }
+    }
+    ImGui::End();
+}
+
+static std::chrono::high_resolution_clock::time_point g_lastCrouchTime;
+static bool g_crouchBeforeJump = false;
 
 TrainerLogic::TrainerLogic()
-    : m_state(State::Ready), m_attempt(0), m_cumulativePercent(0.0), m_lastDeltaMs(0.0), m_lastDeltaFrames(0.0), m_lastChance(0.0), m_feedback(""), m_targetFPS(0.0), m_frameTime(0.0), m_awaitingFPS(true), m_ignoreNextJump(true)
+    : m_state(State::Ready), m_attempt(0), m_cumulativePercent(0.0), m_lastDeltaMs(0.0), m_lastDeltaFrames(0.0), m_lastChance(0.0), m_feedback(""), m_targetFPS(0.0), m_frameTime(0.0), m_awaitingFPS(true), m_ignoreNextJump(true), m_superglideCount(0)
 {
 }
 
@@ -13,34 +33,114 @@ void TrainerLogic::Update(InputHandler& input) {
     if (m_awaitingFPS) return;
     KeyEvent evt;
     while (input.PopEvent(evt)) {
-        // Print debug info for event processing
         using namespace std::chrono;
         ULONGLONG sysTime = GetTickCount64();
         auto now = high_resolution_clock::now();
-        // std::ofstream log("debug_log.txt", std::ios::app);
+        // Log every event
+        {
+            std::ofstream log("build/logic_debug.log", std::ios::app);
+            log << "State: " << (int)m_state << ", vkCode: " << evt.vkCode << ", pressed: " << evt.pressed << ", sysTime: " << sysTime << std::endl;
+        }
+        std::ostringstream dbg;
+        dbg << "State: " << (int)m_state << ", vkCode: " << evt.vkCode << ", pressed: " << evt.pressed << ", sysTime: " << sysTime;
+        AddDebugLog(dbg.str());
         if (m_state == State::Ready) {
-            if (evt.vkCode == input.GetJumpKey()) {
+            if (evt.vkCode == input.GetCrouchKey()) {
+                g_lastCrouchTime = evt.timestamp;
+                g_crouchBeforeJump = true;
+                m_feedback = "Crouch pressed before jump. Try to press jump first, then crouch.";
+                // Log feedback
+                {
+                    std::ofstream log("build/logic_debug.log", std::ios::app);
+                    log << "Feedback: " << m_feedback << std::endl;
+                }
+                AddDebugLog(m_feedback);
+                // Immediately reset state so user can try again
+                m_state = State::Ready;
+                g_crouchBeforeJump = false;
+            } else if (evt.vkCode == input.GetJumpKey()) {
                 if (m_ignoreNextJump) {
-                    // Ignore the first jump (starts the climb)
                     m_ignoreNextJump = false;
                     m_feedback = "Climb started. Now attempt the superglide!";
+                    // Log feedback
+                    {
+                        std::ofstream log("build/logic_debug.log", std::ios::app);
+                        log << "Feedback: " << m_feedback << std::endl;
+                    }
+                    AddDebugLog(m_feedback);
                     continue;
                 }
+                // If crouch was pressed before jump and is still held, show timing feedback
+                if (g_crouchBeforeJump && input.IsCrouchKeyHeld()) {
+                    auto delta = std::chrono::duration<double>(evt.timestamp - g_lastCrouchTime).count();
+                    int ms = static_cast<int>(delta * 1000.0);
+                    m_feedback = std::string("Crouched ") + std::to_string(ms) + " ms before jump. Try to press jump first, then crouch.";
+                    // Log feedback
+                    {
+                        std::ofstream log("build/logic_debug.log", std::ios::app);
+                        log << "Feedback: " << m_feedback << std::endl;
+                    }
+                    AddDebugLog(m_feedback);
+                    g_crouchBeforeJump = false;
+                    // Immediately reset state so user can try again
+                    m_state = State::Ready;
+                    continue;
+                }
+                g_crouchBeforeJump = false;
                 m_jumpTime = evt.timestamp;
                 m_state = State::Jump;
                 m_feedback = "Awaiting Crouch...";
-            } else if (evt.vkCode == input.GetCrouchKey()) {
-                // If crouch is pressed while in Ready, check if jump is also held
-                if (input.GetJumpKey() && input.IsJumpKeyHeld()) {
-                    m_feedback = "Jump and Crouch pressed together! Try to press jump first, then crouch.";
-                } else {
-                    m_feedback = "Crouch pressed before jump. Try to press jump first, then crouch.";
+                // Log feedback
+                {
+                    std::ofstream log("build/logic_debug.log", std::ios::app);
+                    log << "Feedback: " << m_feedback << std::endl;
+                }
+                AddDebugLog(m_feedback);
+                // If crouch is already held, process crouch immediately
+                if (input.IsCrouchKeyHeld()) {
+                    m_crouchTime = evt.timestamp;
+                    auto delta = std::chrono::duration<double>(m_crouchTime - m_jumpTime).count();
+                    m_lastDeltaMs = delta * 1000.0;
+                    m_lastDeltaFrames = delta / m_frameTime;
+                    std::ostringstream oss;
+                    oss << std::fixed << std::setprecision(6);
+                    double chance = 0.0;
+                    if (m_lastDeltaFrames < 1.0) {
+                        chance = m_lastDeltaFrames * 100.0;
+                    } else if (m_lastDeltaFrames < 2.0) {
+                        chance = (2.0 - m_lastDeltaFrames) * 100.0;
+                    }
+                    if (m_lastDeltaFrames < 1.0) {
+                        m_lastChance = m_lastDeltaFrames * 100.0;
+                        double difference = m_frameTime - delta;
+                        oss << std::setprecision(5) << "Crouch slightly *later* by " << difference << " seconds to improve.";
+                    } else if (m_lastDeltaFrames < 2.0) {
+                        m_lastChance = (2.0 - m_lastDeltaFrames) * 100.0;
+                        double difference = delta - m_frameTime;
+                        oss << std::setprecision(5) << "Crouch slightly *sooner* by " << difference << " seconds to improve.";
+                    } else {
+                        m_lastChance = 0.0;
+                        double difference = delta - m_frameTime;
+                        oss << std::setprecision(5) << "Crouched too late by " << difference << " seconds.";
+                    }
+                    m_feedback = oss.str();
+                    m_attempt++;
+                    m_cumulativePercent += m_lastChance;
+                    m_state = State::Ready;
+                    m_ignoreNextJump = true;
+                    m_superglideCount++;
+                    // Log feedback
+                    {
+                        std::ofstream log("build/logic_debug.log", std::ios::app);
+                        log << "Feedback: " << m_feedback << std::endl;
+                    }
+                    AddDebugLog(m_feedback);
                 }
             }
         } else if (m_state == State::Jump) {
             if (evt.vkCode == input.GetCrouchKey()) {
                 m_crouchTime = evt.timestamp;
-                auto delta = std::chrono::duration<double>(m_crouchTime - m_jumpTime).count(); // seconds
+                auto delta = std::chrono::duration<double>(m_crouchTime - m_jumpTime).count();
                 m_lastDeltaMs = delta * 1000.0;
                 m_lastDeltaFrames = delta / m_frameTime;
                 std::ostringstream oss;
@@ -51,14 +151,13 @@ void TrainerLogic::Update(InputHandler& input) {
                 } else if (m_lastDeltaFrames < 2.0) {
                     chance = (2.0 - m_lastDeltaFrames) * 100.0;
                 }
-                // Calculate chance and feedback
                 if (m_lastDeltaFrames < 1.0) {
                     m_lastChance = m_lastDeltaFrames * 100.0;
-                    double difference = m_frameTime - delta; // positive if crouch was too early
+                    double difference = m_frameTime - delta;
                     oss << std::setprecision(5) << "Crouch slightly *later* by " << difference << " seconds to improve.";
                 } else if (m_lastDeltaFrames < 2.0) {
                     m_lastChance = (2.0 - m_lastDeltaFrames) * 100.0;
-                    double difference = delta - m_frameTime; // positive if crouch was too late
+                    double difference = delta - m_frameTime;
                     oss << std::setprecision(5) << "Crouch slightly *sooner* by " << difference << " seconds to improve.";
                 } else {
                     m_lastChance = 0.0;
@@ -70,9 +169,22 @@ void TrainerLogic::Update(InputHandler& input) {
                 m_cumulativePercent += m_lastChance;
                 m_state = State::Ready;
                 m_ignoreNextJump = true;
+                m_superglideCount++;
+                // Log feedback
+                {
+                    std::ofstream log("build/logic_debug.log", std::ios::app);
+                    log << "Feedback: " << m_feedback << std::endl;
+                }
+                AddDebugLog(m_feedback);
             } else if (evt.vkCode == input.GetJumpKey()) {
                 m_state = State::JumpWarned;
                 m_feedback = "Warning: Multiple jumps detected, results may not reflect ingame behavior.";
+                // Log feedback
+                {
+                    std::ofstream log("build/logic_debug.log", std::ios::app);
+                    log << "Feedback: " << m_feedback << std::endl;
+                }
+                AddDebugLog(m_feedback);
             }
         } else if (m_state == State::JumpWarned) {
             if (evt.vkCode == input.GetCrouchKey()) {
@@ -83,6 +195,12 @@ void TrainerLogic::Update(InputHandler& input) {
                 m_feedback = "Double jump input, resetting.";
                 m_state = State::Ready;
                 m_ignoreNextJump = true;
+                // Log feedback
+                {
+                    std::ofstream log("build/logic_debug.log", std::ios::app);
+                    log << "Feedback: " << m_feedback << std::endl;
+                }
+                AddDebugLog(m_feedback);
             }
         }
     }
@@ -91,6 +209,7 @@ void TrainerLogic::Update(InputHandler& input) {
 void TrainerLogic::RenderUI() {
     ImGui::SetNextWindowBgAlpha(0.8f);
     ImGui::Begin("Superglide Trainer", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::Text("Superglide Count: %d", m_superglideCount);
     if (m_awaitingFPS) {
         static char fpsBuf[16] = "";
         ImGui::Text("Enter your target FPS (e.g. 144):");

@@ -19,6 +19,7 @@ public:
     double GetCumulativePercent() const { return m_cumulativePercent; }
     bool IsAwaitingFPS() const { return m_awaitingFPS; }
     void SetTargetFPS(double fps);
+    int GetSuperglideCount() const { return m_superglideCount; }
 
     enum class State {
         Ready,
@@ -41,6 +42,7 @@ private:
     double m_frameTime;
     bool m_awaitingFPS;
     bool m_ignoreNextJump;
+    int m_superglideCount = 0;
 
     // Key display
     std::string KeyName(WPARAM vk) const;

@@ -50,7 +50,11 @@ void InputHandler::HandleKey(WPARAM vkCode, bool pressed) {
     using namespace std::chrono;
     auto now = high_resolution_clock::now();
     ULONGLONG sysTime = GetTickCount64();
-    // std::ofstream log("debug_log.txt", std::ios::app);
+    // Log every key event
+    {
+        std::ofstream log("input_debug.log", std::ios::app);
+        log << "vkCode: " << vkCode << ", pressed: " << pressed << ", sysTime: " << sysTime << std::endl;
+    }
     if (m_binding) {
         if (m_waitingForJump && pressed) {
             m_jumpKey = vkCode;
