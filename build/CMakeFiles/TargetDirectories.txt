@@ -1,0 +1,3 @@
+C:/Dev/SuperglideTrainer/Fresh start/build/CMakeFiles/SuperglideTrainer.dir
+C:/Dev/SuperglideTrainer/Fresh start/build/CMakeFiles/edit_cache.dir
+C:/Dev/SuperglideTrainer/Fresh start/build/CMakeFiles/rebuild_cache.dir

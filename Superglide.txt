@@ -1,0 +1,278 @@
+
+Superglide
+Usefulness:
+Difficulty:
+medium
+
+Superglide
+Core Info:
+
+A Superglide is an instant 1 frame acceleration out of a Mantle.
+
+There are two major aspects that you should train independently before fusing them into the whole Superglide.
+
+    Input package:
+
+    A Jump input first and then a Crouch input 1 frame later.
+    Mantle Timing:
+
+    You need to do the input package in the last 0.15 second of a Mantle.
+
+The best theory is that you get the acceleration of a Slide and Jump at the same time. And because you are mid air you don’t experience ground friction, slowing you back down.
+Hardware in general can have a pretty massive impact. Read more down below in Hardware issues.
+Technique/Inputs:
+
+    Activate Sprint
+    Mantle over an edge.
+    In the last 0.15 second of a mantle.
+    Jump
+    1 Frame
+    Crouch
+
+In game Issues:
+
+    You need a Sprint to Superglide. Out of a Walk it is way harder and you will not get the full speed. You can Sprint into the Mantle or activate it during the Mantle.
+
+Superglide with "Hold" Sprint
+
+    You need your “Sprint control” setting set to Press not Hold. With Hold you won’t get a Mantleboost and not get the full speed of a Superglide. They will also be as hard as walked Superglides. EVEN WHEN USING ALWAYS SPRINT. Read more in the “Additional Info” section in Mantle
+    Your Slideboost timer needs to be off cooldown if you want to Superglide. So if you Slid within the past 2sec or have done another Superglide within the past 2 sec you won’t be able to Superglide.
+
+Input package:
+
+You can train your Jump > crouch timing with the Superglide Trainer.
+Mouse and keyboard:
+
+    It’s common to put your Crouch on a button next to your Jump input, so you can press them both with 1 finger at the same time. C V or B with Spacebar for example.
+    The simplest way to alter the delay and which button you hit first is to manually correct it by holding your thumb in a different way. This might feel strange at first but often this can already make a 1 -3 frame difference. And with practice you can get consistent.
+    Different keycap profiles will naturally alter which button you hit first. So flipping over your crouch or Spacebar keycap can help. Test out which of the two feels better to you and less awkward during non gaming tasks. You could also use different keycaps for each key. Or tape stuff to your existing keycaps.
+    Some folks have seen success by Jumping or Crouching with Scrollwheel.
+    Your keyboard switches will also alter when a key is activated. Tactile switches like MX blues make it much easier to feel the activation point, and putting different switches on your C, V and B then on Spacebar might help with activation as well.
+    The ultimate hardware change would be to get a new keyboard. Either to get away from a low polling rate & weird keystroke scan issues which introduce further randomness or make it outright impossible. Here is an article we wrote about the best Keyboards for Apex. Potential keyboard scan issues and how to resolve them without getting new hardware are further explained in the Keyboard Issues section below.
+    When setting up your actuation points on a Hal effect Keyboard it comes down to personal preference. Try jump and crouch on the same delay first. Then adjust one of them till you start to hit it. Have the Superglide Trainer open to keep testing it. If you stop hitting them in game then your natural thumb position does not align with the actuation points. Go back and keep experimenting.
+
+Controller:
+
+    For controller the only tip is to put jump and crouch on two buttons you can hit with the same finger. Like A+B, X+Square or two paddles.
+
+Mantle timing:
+
+You need to do the Superglide Inputs in the last 150ms of a Mantle. For a start it can help to practice this on the same ledge over and over till you are consistent with that. It also helps to practice with the same legend. Since they have different body heights it’s easier to get used to how a Mantle looks on the same legend. Beyond that there are 5 cues you can use to practice the Mantle timing.
+
+    Jump
+    Try to jump immediately out of a mantle. Don’t even bother with a crouch input for now. The first few frames where you jump is the Superglide window. If you jump too early you simply won’t jump. So start by deliberately jumping too late and then jump earlier and earlier till you are right on the edge where it shifts into not jumping at all. That method of figuring out the mantle timing works on every ledge. But there’s also this spot. That even shows you if you jumped too late. This is the most precise method to experience the Superglide mantle timing for the first time.
+    Audio cue
+    There is a distinct hand grab sound the Legend does at the end of a mantle. It sounds like this. That sound plays at around 0.3 seconds before the mantle ends. So if you time your jump crouch combo right after that sound you hit the correct window. But how that timing feels between your headset or speaker latency and hand-ear/eye coordination might be different. So it is helpful to use the hand sound as a cue but to you it might feel like you have to time your inputs with it instead of after.
+    Camera shake
+    Your view will shake during a mantle and then come to a stop. It’s easiest to see this on the upper border of your screen. That stop happens just a few frames before the Superglide window closes. So doing your input together with the wiggle stop is a good ballpark to aim for. Same as with the audio cue, to you it might feel correct to do it slightly before or after.
+    Camera turn
+    If you turn your view during the mantle it will stop at about 80 degrees and then continue after the mantle is finished. Time your jump crouch combo slightly before that. This is not to say to actually do a Superglide using the turn, but to use it as a tool to get a feeling for the end of the mantle.
+    Animations
+    If you have learned to Superglide and just keep playing you will start to develop an intuitive understanding of how your heirlooms and weapons move around during different mantles. Helping with the feeling of the mantle timing.
+
+All the tips for the jump crouch combo and mantle timing are only good for the initial practice, to get you used to Supergliding.
+
+In game it makes much more sense to go for feeling. More tips to practice Movement in actual games.
+Hardware Issues:
+
+Superglides are unique in the way that they are heavily influences by your Hardware.
+Keyboard issues:
+
+Find out the polling rate of your keyboard. That + some other small system delays is the lowest frame delay you can hit.
+
+Your keyboard might also scan the inputs in a weird way.
+
+    In key clusters. So switching over 1 key left or right might get you out of one cluster and suddenly into the perfect delay.
+    In a direction like from left to right. So using C,V,B,N with Spacebar all come with a different delay and only one of them is the correct one.
+    Different scan rates or delays on your modifier keys (Spacebar, Shift, Ctrl etc.) So using Spacebar as jump input might never ever work for you. Using two letters next to each other might be your solution.
+
+So try what happens to your frame delay when you switch away from the Spacebar as jump input. Try out keys next to each other, in different orders and keys far apart from each other. Try to use a keyboard-key for one input and a mouse-button for the other. This should help you narrow down the issue. You may or may not want to use those exact keybinds in game. But it will help you narrow down what your hardware issues might be. So you can potentially adapt a keybind setup that can work for you, without getting a new keyboard.
+Other hardware issues:
+
+A faulty USB port or other system related latency Issues can be the cause of that. Switch USB ports. Check if your device drivers are up to date. In extreme cases, problems with other components like your motherboard, CPU or operating system could be the cause. Try it on a different PC.
+Software Issues:
+
+You might have software running that introduces System/Input delay, a delay to all your keys or specific keys. Try running the Trainer and/or Apex just by itself and close all other programs. Check the task manager to make sure they’re not still active in background processes.
+Here is a pitch perfect example of this. The Program “HotKey Resolution Changer” introduced a 7ms delay to all Inputs. If you discover a similar Software issue like this please report it to us on Discord so we can add it here as an example.
+Use cases:
+
+Every time you want to gain speed of an edge.
+
+    Throw off your enemies aim. Especially useful to make yourself harder to hit while reloading.
+    Get quicker into cover
+    Escape or chase someone.
+    Cross gaps that are not possible to get across without the usage of movement abilities like grapple, or jetpack.
+
+Advanced uses:
+
+Sideways Superglide
+
+    Sideways Superglides.
+        The Mantle pull takes 0,3sec. The Superglide window is the last 0.15 sec of the mantle pull. The Mantle pull will finish even if you let go of forward. This lets you switch of forward to a sideways direction, before inputting the Superglide.
+
+Tech combinations:
+
+    Superglide Tap-Strafe:
+    Since it uses a Jump Input you can combine it with Lurches.
+
+History:
+
+Superglide was discovered by Verzz and posted to the Apexrollouts Subreddit on March 30th 2021. Detailed investigations into it’s exact Input timing were later done by JayTheYggdrasil
+Insta-Glide
+Usefulness:
+Difficulty:
+hard
+
+Insta-Glide
+Core Info:
+
+Superglide after using an Insta-mantle. Previously and shortly known as Superground.
+Technique/Inputs:
+
+    Hit Jump and keep holding it
+    Walk or Sprint towards the edge of object
+    As you go over the edge. Turn your view 180° while you continue to hold Forward
+    Perform the Inputs of a Superglide
+
+Helpful Tips:
+
+    The main component is mastering Insta-mantle. Master them first before even attempting Insta-glides.
+    The turnaround method is the best one but not the only. Learn more about them in Insta-mantle.
+    If you crouch, uncrouch and Jump during the uncrouch, you can start to hold Jump without the actual height gain of jump. This also works out of a slide.
+    Read the Article: “Universal tips for practicing movement”.
+
+Use cases:
+
+    Since Insta-mantles work off of super low objects. This lets you Superglide on objects where you’d think it shouldn’t be possible.
+
+History:
+
+    Superglides off of very low overwalkable objects have been around for quiet some time. The earliest i can find is this one from wrthcrw from October 21st 2021. About 5 months after the discovery of Superglides.
+    YeulFPS managed to do them of an actual pebble a few days later. There was nothing more to it than: try to land on edge of low object.
+    On Feb 27th 2024 PerceptionFinancial5 apparently misspelled ground Superglide as ground superground.
+    This started a bit of a meme of “Supergrounds”. This sparked some new interest in the concept and we saw a few more “Superground” posts in Apexrollouts the following days and weeks.
+    This sparked budderboy to investigate them a bit further and on March 30th 2024 he posted about his new melee mantle method
+    Budderboys findings inspired Set3kh to investigate them even further and on April 6th 2024 he posted his video on “Insta-mantles” which is the technique we use today for Insta-glides.
+
+Backwards Superglide
+Usefulness:
+Difficulty:
+hard
+
+Backwards Superglide
+Core Info:
+
+A Superglide straight backwards without using lurches. Uses a perfectly times backwards input or mantle cancel manipulation. Is easier on Controller due to how analog inputs handle constant inputs.
+Technique/Inputs:
+
+    Hold forward to mantle an obstacle.
+    Once you are in the Mantle pull let go of Forward
+    Look up
+    Start holding Backwards
+    Perform the rest of the Superglide
+
+Helpful Tips:
+
+    Looking up more than 25° prevents the backward input from canceling your mantle. This way you can hold backwards the same as a sideways input for a Sideways Superglide.
+    If you’re not using the “look up” method, your backwards input has to be pressed exactly 1 frame before the Superglide Inputs. Making them significantly harder.
+    Since Analog sticks send continuous backwards inputs while moving the stick backwards it’s much easier to hit the timing on Controller.
+
+Use cases:
+
+    Very rare cases where you can only reach a spot this way
+    Mostly for styling on enemies.
+
+Advanced uses:
+
+    Backwards Superglide with Speedboost:
+    Speedboost doesn’t need the look up method.
+
+History:
+
+    On January 8th 2022 Thevilnside posted in Apexrollouts that he had found a way to Superglide straight backwards with Speed Boosts.
+    Somewhat later someone figured out it’s easier on Controller.
+    On April 27th 2024 budderboy posted his Mantle-Guide, in which he showcased the look up method.
+
+Glide-boost
+Usefulness:
+Difficulty:
+medium
+
+Glide-boost
+Core Info:
+
+Combining a Superglide with an End Boost.
+Technique/Inputs:
+
+    Superglide at the correct distance and height from the wall.
+    Hold Forward
+
+Helpful Tips:
+
+    Supergliding does not update your Climb space. It stays at the exact same height as the ground you started the climb into the Superglide from.
+    So try to Climb on the wall to get a feeling for where the End boost triggers. That’s where you have to hit it with a Superglide as well.
+    This means the height of the object in relation to how far away from the wall it is plays a big role in whether you’ll be able to Glide-boost. Objects of a height of 90-100hu seem to work well.
+    It’s better to hit the wall a tiny bit below the Max climb height, since you’ll have a bit of upwards momentum from the Superglide that’ll carry you into the End boost.
+    Use the angle towards the wall to slightly adjust the point where you hit it.
+    Read the Article: “Universal tips for practicing movement”.
+
+Use cases:
+
+    Styling on enemies.
+    Reaching a further and higher point at the end of this movement chain then with a Superglide alone.
+
+History:
+
+    This was discovered by JayTheYggdrasil.
+
+Glide-bounce
+Usefulness:
+Difficulty:
+hard
+
+Glide-bounce
+Core Info:
+
+Combining a Superglide with a Wallbounce.
+Technique/Inputs:
+
+    Superglide at the correct distance and height from the wall
+    After connecting to the wall wait for a tiny moment
+    Press Jump
+
+Helpful Tips:
+
+    Supergliding does not update your Climb space. It stays at the exact same height as the ground you started the climb into the Superglide from.
+    So try to Wallbounce of the wall to get a feeling for where the Green Zone is. That’s where you have to hit it with a Superglide as well.
+    This means the height of the object in relation to how far away from the wall it is plays a big role in whether you’ll be able to Glide-bounce. Objects of a height of 30-50hu seem to work well.
+    It will help you a lot to understand the Core Info of the Climb Space and the Climb Zones. This will eliminate some frustration in understanding why Glide-bounces will sometimes work and sometimes not.
+    Use the angle towards the wall and the timing of how far you let yourself drop while connected on the wall to reach the Green Zone.
+    Read the Article: “Universal tips for practicing movement”.
+
+Use cases:
+
+    Styling on enemies.
+    There have to be spots in the map that you can only reach with Glide-bounces.
+
+Advanced uses:
+
+Sideways Glide-bounce
+
+    Sideways Glide-bounce.
+
+    You can Superglide Sideways into a Glide-bounce. This will give you much more freedom in how far away objects have to be from a wall toi still set up a Glide-bounce.
+    Glide-U-bounce.
+
+    You can use the principles behind a U-Bounce to reach the Green Zone after a Superglide.
+
+Tech combinations:
+
+Amped cover Glide-bounce
+
+    Ramparts Amped Cover has the perfect height to set up Glide-bounces.
+
+History:
+
+    Glide-bounce was first discovered by thevilnside and shared in this video on July 29th, 2021.
+    For this Wiki i renamed Superglide Wallbounce into Glide-bounce to keep in line with other established names like Glide-Boost and Insta-glide.
+    That Rampart walls are perfect for Glide-bounce was pointed out by El Gato while i worked on this entry.

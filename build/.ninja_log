@@ -1,0 +1,22 @@
+# ninja log v6
+6	2278	7685700425491211	CMakeFiles/SuperglideTrainer.dir/src/InputHandler.cpp.obj	6cbb2884dd9ecc7d
+12	2357	7685700425546542	CMakeFiles/SuperglideTrainer.dir/src/imgui_draw.cpp.obj	f6241a5639ab9a4e
+17	1765	7685700425608766	CMakeFiles/SuperglideTrainer.dir/src/imgui_demo.cpp.obj	99e8d498e8371635
+21	1810	7685700425642301	CMakeFiles/SuperglideTrainer.dir/src/imgui_impl_win32.cpp.obj	5370db036bbe9b58
+1608	2089	7685702846376324	SuperglideTrainer.exe	ef9a6eb36b9ac196
+15	1811	7685700425576797	CMakeFiles/SuperglideTrainer.dir/src/imgui_tables.cpp.obj	8fe992987417801d
+10	2996	7685700425516293	CMakeFiles/SuperglideTrainer.dir/src/imgui.cpp.obj	600afdfef0ccfa56
+24	2275	7685700425674856	CMakeFiles/SuperglideTrainer.dir/src/imgui_impl_dx11.cpp.obj	cf35a7c7ffe0b140
+8	2276	7685700425516293	CMakeFiles/SuperglideTrainer.dir/src/TrainerLogic.cpp.obj	e643671aecf35e10
+3	1607	7685702830328771	CMakeFiles/SuperglideTrainer.dir/src/main.cpp.obj	9d976f3a4307c534
+14	2397	7685700425556583	CMakeFiles/SuperglideTrainer.dir/src/imgui_widgets.cpp.obj	c47aa2251e2301bd
+16	1470	7685706475953723	CMakeFiles/SuperglideTrainer.dir/src/imgui_impl_win32.cpp.obj	5370db036bbe9b58
+15	1471	7685706475933712	CMakeFiles/SuperglideTrainer.dir/src/imgui_demo.cpp.obj	99e8d498e8371635
+13	1472	7685706475913703	CMakeFiles/SuperglideTrainer.dir/src/imgui_tables.cpp.obj	8fe992987417801d
+19	1716	7685706475974519	CMakeFiles/SuperglideTrainer.dir/src/imgui_impl_dx11.cpp.obj	cf35a7c7ffe0b140
+9	1736	7685706475873722	CMakeFiles/SuperglideTrainer.dir/src/imgui_draw.cpp.obj	f6241a5639ab9a4e
+6	1795	7685706475843130	CMakeFiles/SuperglideTrainer.dir/src/TrainerLogic.cpp.obj	e643671aecf35e10
+12	1907	7685706475893702	CMakeFiles/SuperglideTrainer.dir/src/imgui_widgets.cpp.obj	c47aa2251e2301bd
+3	2010	7685706475813096	CMakeFiles/SuperglideTrainer.dir/src/main.cpp.obj	9d976f3a4307c534
+8	2339	7685706475863662	CMakeFiles/SuperglideTrainer.dir/src/imgui.cpp.obj	600afdfef0ccfa56
+2339	2485	7685706499171401	SuperglideTrainer.exe	ef9a6eb36b9ac196
