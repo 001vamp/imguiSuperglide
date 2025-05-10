@@ -62,6 +62,39 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
+    ImGuiStyle& style = ImGui::GetStyle();
+    ImVec4 purple = ImVec4(0.45f, 0.25f, 0.75f, 1.0f);
+    ImVec4 purpleAccent = ImVec4(0.60f, 0.35f, 0.90f, 1.0f);
+    ImVec4 bgDark = ImVec4(0.10f, 0.08f, 0.15f, 1.0f);
+    style.Colors[ImGuiCol_WindowBg] = bgDark;
+    style.Colors[ImGuiCol_TitleBg] = purple;
+    style.Colors[ImGuiCol_TitleBgActive] = purpleAccent;
+    style.Colors[ImGuiCol_Border] = purpleAccent;
+    style.Colors[ImGuiCol_FrameBg] = ImVec4(0.18f, 0.13f, 0.25f, 1.0f);
+    style.Colors[ImGuiCol_FrameBgHovered] = purple;
+    style.Colors[ImGuiCol_FrameBgActive] = purpleAccent;
+    style.Colors[ImGuiCol_Button] = purple;
+    style.Colors[ImGuiCol_ButtonHovered] = purpleAccent;
+    style.Colors[ImGuiCol_ButtonActive] = ImVec4(0.75f, 0.45f, 1.0f, 1.0f);
+    style.Colors[ImGuiCol_Header] = purple;
+    style.Colors[ImGuiCol_HeaderHovered] = purpleAccent;
+    style.Colors[ImGuiCol_HeaderActive] = purpleAccent;
+    style.Colors[ImGuiCol_Separator] = purpleAccent;
+    style.Colors[ImGuiCol_SliderGrab] = purpleAccent;
+    style.Colors[ImGuiCol_SliderGrabActive] = ImVec4(0.75f, 0.45f, 1.0f, 1.0f);
+    style.Colors[ImGuiCol_CheckMark] = purpleAccent;
+    // style.Colors[ImGuiCol_ProgressBarBg] = ImVec4(0.18f, 0.13f, 0.25f, 1.0f);
+    // style.Colors[ImGuiCol_ProgressBar] = purpleAccent;
+    style.WindowRounding = 10.0f;
+    style.FrameRounding = 8.0f;
+    style.GrabRounding = 8.0f;
+    style.ScrollbarRounding = 8.0f;
+    style.WindowBorderSize = 2.0f;
+    style.FrameBorderSize = 1.0f;
+    style.WindowPadding = ImVec2(18, 14);
+    style.FramePadding = ImVec2(10, 6);
+    style.ItemSpacing = ImVec2(10, 8);
+    style.ItemInnerSpacing = ImVec2(8, 6);
 
     // Setup Platform/Renderer backends
     ImGui_ImplWin32_Init(hwnd);
@@ -118,14 +151,12 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 
         // Settings window
         if (showSettings) {
-            ImGui::Begin("Settings", &showSettings, ImGuiWindowFlags_AlwaysAutoResize);
-            ImGui::Text("Key Bindings:");
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(18, 14));
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.0f);
+            ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.13f, 0.10f, 0.18f, 1.0f));
+            ImGui::Begin("Settings", &showSettings, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse);
+            ImGui::TextColored(purpleAccent, "Key Bindings:");
             ImGui::Separator();
-            // Always show the current keys from InputHandler
-            jumpKey = inputHandler->GetJumpKey();
-            crouchKey = inputHandler->GetCrouchKey();
-            GetKeyNameTextA(MapVirtualKeyA((UINT)jumpKey, 0) << 16, jumpKeyName, sizeof(jumpKeyName));
-            GetKeyNameTextA(MapVirtualKeyA((UINT)crouchKey, 0) << 16, crouchKeyName, sizeof(crouchKeyName));
             ImGui::Text("Jump: %s", jumpKey ? jumpKeyName : "Not set");
             ImGui::SameLine();
             ImGui::BeginDisabled(running || bindMode != BindMode::None);
@@ -144,9 +175,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
             ImGui::EndDisabled();
             if (bindMode != BindMode::None) {
                 ImGui::TextColored(ImVec4(1,1,0,1), "Press a key...");
-                // Wait for binding to finish
                 if (!inputHandler->IsBinding()) {
-                    // Update the correct key and name
                     jumpKey = inputHandler->GetJumpKey();
                     crouchKey = inputHandler->GetCrouchKey();
                     GetKeyNameTextA(MapVirtualKeyA((UINT)jumpKey, 0) << 16, jumpKeyName, sizeof(jumpKeyName));
@@ -156,19 +185,20 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
                 }
             }
             ImGui::Separator();
-            // Only enable Start Trainer if both keys are set
             bool canStart = jumpKey && crouchKey;
             ImGui::BeginDisabled(!canStart && !running);
             if (ImGui::Button(running ? "Stop Trainer" : "Start Trainer")) {
                 if (running) {
                     running = false;
-                    trainerLogic = std::make_unique<TrainerLogic>(); // Reset logic
+                    trainerLogic = std::make_unique<TrainerLogic>();
                 } else if (canStart) {
                     running = true;
-                    trainerLogic = std::make_unique<TrainerLogic>(); // Reset logic
+                    trainerLogic = std::make_unique<TrainerLogic>();
                 }
             }
             ImGui::EndDisabled();
+            ImGui::PopStyleColor();
+            ImGui::PopStyleVar(2);
             ImGui::End();
         }
 
@@ -179,16 +209,43 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
             keysChanged = false;
         }
 
-        // Main trainer window (moveable)
-        ImGui::Begin("Superglide Trainer", nullptr, ImGuiWindowFlags_None);
-        ImGui::Text("Status: %s", running ? "Running" : "Stopped");
+        // Main trainer window (modernized)
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(24, 18));
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 12.0f);
+        ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.13f, 0.10f, 0.18f, 1.0f));
+        ImGui::Begin("Superglide Trainer", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse);
+        ImGui::PushFont(NULL);
+        ImGui::TextColored(purpleAccent, "Status: %s", running ? "Running" : "Stopped");
         ImGui::Text("Jump Key: %s", jumpKey ? jumpKeyName : "Not set");
         ImGui::Text("Crouch Key: %s", crouchKey ? crouchKeyName : "Not set");
-        if (running && jumpKey && crouchKey) {
-            trainerLogic->RenderUI();
+        ImGui::Separator();
+        // FPS input logic
+        if (running && jumpKey && crouchKey && trainerLogic->IsAwaitingFPS()) {
+            static char fpsBuf[16] = "";
+            ImGui::Text("Enter your target FPS (e.g. 144):");
+            ImGui::InputText("##fps", fpsBuf, sizeof(fpsBuf), ImGuiInputTextFlags_CharsDecimal);
+            if (ImGui::Button("Set FPS") && atof(fpsBuf) > 0.0) {
+                trainerLogic->SetTargetFPS(atof(fpsBuf));
+            }
+        } else if (running && jumpKey && crouchKey) {
+            trainerLogic->Update(*inputHandler);
+            ImGui::Text("Attempt: %d", trainerLogic->GetAttempt());
+            ImGui::Text("Frame time: %.3f ms (%.2f FPS)", trainerLogic->GetFrameTime() * 1000.0, trainerLogic->GetTargetFPS());
+            ImGui::Text("Last delay: %.6f ms (%.6f frames)", trainerLogic->GetLastDeltaMs(), trainerLogic->GetLastDeltaFrames());
+            if (trainerLogic->GetLastChance() > 0.0)
+                ImGui::TextColored(ImVec4(0.6f, 1.0f, 0.6f, 1.0f), "Chance to hit: %.6f%%", trainerLogic->GetLastChance());
+            else
+                ImGui::TextColored(ImVec4(1.0f, 0.3f, 0.3f, 1.0f), "Chance to hit: 0%%");
+            ImGui::TextWrapped("%s", trainerLogic->GetFeedback().c_str());
+            if (trainerLogic->GetAttempt() > 0)
+                ImGui::Text("Average: %.1f%%", trainerLogic->GetCumulativePercent() / trainerLogic->GetAttempt());
+            ImGui::ProgressBar((float)(trainerLogic->GetLastDeltaFrames() / 2.0), ImVec2(240, 24), "");
         } else {
             ImGui::Text("Press Start in Settings to begin training.");
         }
+        ImGui::PopFont();
+        ImGui::PopStyleColor();
+        ImGui::PopStyleVar(2);
         ImGui::End();
 
         // Rendering

@@ -2,6 +2,7 @@
 #include <chrono>
 #include <cstdio>
 #include <windows.h>
+#include <fstream>
 
 HHOOK InputHandler::s_keyboardHook = nullptr;
 InputHandler* InputHandler::s_instance = nullptr;
@@ -49,7 +50,10 @@ void InputHandler::HandleKey(WPARAM vkCode, bool pressed) {
     using namespace std::chrono;
     auto now = high_resolution_clock::now();
     ULONGLONG sysTime = GetTickCount64();
-    printf("[HOOK] vkCode=%lu pressed=%d sysTime=%llu chronoTime=%lld\n", (unsigned long)vkCode, (int)pressed, sysTime, (long long)duration_cast<milliseconds>(now.time_since_epoch()).count());
+    std::ofstream log("debug_log.txt", std::ios::app);
+    log << "[HOOK] vkCode=" << (unsigned long)vkCode << " pressed=" << (int)pressed
+        << " sysTime=" << sysTime
+        << " chronoTime=" << (long long)duration_cast<milliseconds>(now.time_since_epoch()).count() << std::endl;
     if (m_binding) {
         if (m_waitingForJump && pressed) {
             m_jumpKey = vkCode;

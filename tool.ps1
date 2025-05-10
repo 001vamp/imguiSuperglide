@@ -93,6 +93,7 @@ while ($loop -eq "true") {
          Write-Host -ForegroundColor Green " Key Pressed (Crouch)"
          $calculated = $stopwatch.Elapsed
          $elapsedFrames = $calculated.TotalSeconds / $frameTime
+         "DEBUG: delta={0} frames={1}" -f $calculated.TotalSeconds, $elapsedFrames
          $differenceSeconds = $frameTime - $calculated.TotalSeconds
 
          if($elapsedFrames -lt 1) {

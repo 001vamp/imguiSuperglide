@@ -2,6 +2,7 @@
 #include "imgui.h"
 #include <sstream>
 #include <iomanip>
+#include <fstream>
 
 TrainerLogic::TrainerLogic()
     : m_state(State::Ready), m_attempt(0), m_cumulativePercent(0.0), m_lastDeltaMs(0.0), m_lastDeltaFrames(0.0), m_lastChance(0.0), m_feedback(""), m_targetFPS(0.0), m_frameTime(0.0), m_awaitingFPS(true)
@@ -16,11 +17,11 @@ void TrainerLogic::Update(InputHandler& input) {
         using namespace std::chrono;
         ULONGLONG sysTime = GetTickCount64();
         auto now = high_resolution_clock::now();
-        printf("[PROCESS] vkCode=%lu sysTime=%llu chronoTime=%lld eventTime=%lld\n",
-            (unsigned long)evt.vkCode,
-            sysTime,
-            (long long)duration_cast<milliseconds>(now.time_since_epoch()).count(),
-            (long long)duration_cast<milliseconds>(evt.timestamp.time_since_epoch()).count());
+        std::ofstream log("debug_log.txt", std::ios::app);
+        log << "[PROCESS] vkCode=" << (unsigned long)evt.vkCode
+            << " sysTime=" << sysTime
+            << " chronoTime=" << (long long)duration_cast<milliseconds>(now.time_since_epoch()).count()
+            << " eventTime=" << (long long)duration_cast<milliseconds>(evt.timestamp.time_since_epoch()).count() << std::endl;
         if (m_state == State::Ready) {
             if (evt.vkCode == input.GetJumpKey()) {
                 m_jumpTime = evt.timestamp;
