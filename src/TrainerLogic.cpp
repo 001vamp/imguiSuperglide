@@ -12,6 +12,15 @@ void TrainerLogic::Update(InputHandler& input) {
     if (m_awaitingFPS) return;
     KeyEvent evt;
     while (input.PopEvent(evt)) {
+        // Print debug info for event processing
+        using namespace std::chrono;
+        ULONGLONG sysTime = GetTickCount64();
+        auto now = high_resolution_clock::now();
+        printf("[PROCESS] vkCode=%lu sysTime=%llu chronoTime=%lld eventTime=%lld\n",
+            (unsigned long)evt.vkCode,
+            sysTime,
+            (long long)duration_cast<milliseconds>(now.time_since_epoch()).count(),
+            (long long)duration_cast<milliseconds>(evt.timestamp.time_since_epoch()).count());
         if (m_state == State::Ready) {
             if (evt.vkCode == input.GetJumpKey()) {
                 m_jumpTime = evt.timestamp;
@@ -21,20 +30,35 @@ void TrainerLogic::Update(InputHandler& input) {
         } else if (m_state == State::Jump) {
             if (evt.vkCode == input.GetCrouchKey()) {
                 m_crouchTime = evt.timestamp;
-                auto delta = std::chrono::duration<double, std::milli>(m_crouchTime - m_jumpTime).count();
-                m_lastDeltaMs = delta;
-                m_lastDeltaFrames = delta / (m_frameTime * 1000.0);
-                // Calculate chance %
+                auto delta = std::chrono::duration<double>(m_crouchTime - m_jumpTime).count(); // seconds
+                m_lastDeltaMs = delta * 1000.0;
+                m_lastDeltaFrames = delta / m_frameTime;
+                std::ostringstream oss;
+                oss << std::fixed << std::setprecision(6);
+                oss << "[DEBUG] delta: " << delta << " s, frameTime: " << m_frameTime << " s, frames: " << m_lastDeltaFrames << ", chance: ";
+                double chance = 0.0;
+                if (m_lastDeltaFrames < 1.0) {
+                    chance = m_lastDeltaFrames * 100.0;
+                } else if (m_lastDeltaFrames < 2.0) {
+                    chance = (2.0 - m_lastDeltaFrames) * 100.0;
+                }
+                oss << chance << "\n";
+                oss << std::setprecision(6) << m_lastDeltaFrames << " frames have passed.\n";
+                // Calculate chance and feedback
                 if (m_lastDeltaFrames < 1.0) {
                     m_lastChance = m_lastDeltaFrames * 100.0;
-                    m_feedback = "Crouch slightly later to improve.";
+                    double difference = m_frameTime - delta; // positive if crouch was too early
+                    oss << std::setprecision(5) << "Crouch slightly *later* by " << difference << " seconds to improve.";
                 } else if (m_lastDeltaFrames < 2.0) {
                     m_lastChance = (2.0 - m_lastDeltaFrames) * 100.0;
-                    m_feedback = "Crouch slightly sooner to improve.";
+                    double difference = delta - m_frameTime; // positive if crouch was too late
+                    oss << std::setprecision(5) << "Crouch slightly *sooner* by " << difference << " seconds to improve.";
                 } else {
                     m_lastChance = 0.0;
-                    m_feedback = "Crouched too late.";
+                    double difference = delta - m_frameTime;
+                    oss << std::setprecision(5) << "Crouched too late by " << difference << " seconds.";
                 }
+                m_feedback = oss.str();
                 m_attempt++;
                 m_cumulativePercent += m_lastChance;
                 m_state = State::Ready;
@@ -45,7 +69,7 @@ void TrainerLogic::Update(InputHandler& input) {
         } else if (m_state == State::JumpWarned) {
             if (evt.vkCode == input.GetCrouchKey()) {
                 m_crouchTime = evt.timestamp;
-                m_lastDeltaMs = std::chrono::duration<double, std::milli>(m_crouchTime - m_jumpTime).count();
+                m_lastDeltaMs = std::chrono::duration<double>(m_crouchTime - m_jumpTime).count() * 1000.0;
                 m_lastDeltaFrames = m_lastDeltaMs / (m_frameTime * 1000.0);
                 m_lastChance = 0.0;
                 m_feedback = "Double jump input, resetting.";
@@ -73,11 +97,16 @@ void TrainerLogic::RenderUI() {
     ImGui::Text("Attempt: %d", m_attempt);
     ImGui::Text("Frame time: %.3f ms (%.2f FPS)", m_frameTime * 1000.0, m_targetFPS);
     ImGui::Separator();
-    ImGui::Text("Last delay: %.2f ms (%.2f frames)", m_lastDeltaMs, m_lastDeltaFrames);
-    ImGui::Text("Chance: %.1f%%", m_lastChance);
-    ImGui::Text("Feedback: %s", m_feedback.c_str());
+    ImGui::Text("Last delay: %.6f ms (%.6f frames)", m_lastDeltaMs, m_lastDeltaFrames);
+    // Show chance with color
+    if (m_lastChance > 0.0)
+        ImGui::TextColored(ImVec4(0,1,0,1), "Chance to hit: %.6f%%", m_lastChance);
+    else
+        ImGui::TextColored(ImVec4(1,0,0,1), "Chance to hit: 0%%");
+    // Show feedback (frames passed, sooner/later, etc)
+    ImGui::TextWrapped("%s", m_feedback.c_str());
     if (m_attempt > 0)
-        ImGui::Text("Average chance: %.1f%%", m_cumulativePercent / m_attempt);
+        ImGui::Text("Average: %.1f%%", m_cumulativePercent / m_attempt);
     ImGui::ProgressBar((float)(m_lastDeltaFrames / 2.0), ImVec2(200, 20));
     ImGui::End();
 }

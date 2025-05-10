@@ -72,11 +72,13 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
     std::unique_ptr<TrainerLogic> trainerLogic = std::make_unique<TrainerLogic>();
 
     // State
-    bool showSettings = false;
+    bool showSettings = true;
     bool running = false;
-    bool bindingJump = false, bindingCrouch = false;
+    enum class BindMode { None, Jump, Crouch };
+    BindMode bindMode = BindMode::None;
     WPARAM jumpKey = 0, crouchKey = 0;
     char jumpKeyName[32] = "", crouchKeyName[32] = "";
+    bool keysChanged = false;
 
     // Main loop
     bool done = false;
@@ -95,8 +97,10 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 
         // Update input
         inputHandler->Update();
-        if (running)
+        // Only update trainer logic if running and both keys are set
+        if (running && jumpKey && crouchKey) {
             trainerLogic->Update(*inputHandler);
+        }
 
         // Start the Dear ImGui frame
         ImGui_ImplDX11_NewFrame();
@@ -117,32 +121,62 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
             ImGui::Begin("Settings", &showSettings, ImGuiWindowFlags_AlwaysAutoResize);
             ImGui::Text("Key Bindings:");
             ImGui::Separator();
+            // Always show the current keys from InputHandler
+            jumpKey = inputHandler->GetJumpKey();
+            crouchKey = inputHandler->GetCrouchKey();
+            GetKeyNameTextA(MapVirtualKeyA((UINT)jumpKey, 0) << 16, jumpKeyName, sizeof(jumpKeyName));
+            GetKeyNameTextA(MapVirtualKeyA((UINT)crouchKey, 0) << 16, crouchKeyName, sizeof(crouchKeyName));
             ImGui::Text("Jump: %s", jumpKey ? jumpKeyName : "Not set");
             ImGui::SameLine();
-            if (ImGui::Button("Bind Jump")) { bindingJump = true; bindingCrouch = false; }
+            ImGui::BeginDisabled(running || bindMode != BindMode::None);
+            if (ImGui::Button("Bind Jump")) {
+                inputHandler->BeginKeyBinding();
+                bindMode = BindMode::Jump;
+            }
+            ImGui::EndDisabled();
             ImGui::Text("Crouch: %s", crouchKey ? crouchKeyName : "Not set");
             ImGui::SameLine();
-            if (ImGui::Button("Bind Crouch")) { bindingCrouch = true; bindingJump = false; }
-            if (bindingJump || bindingCrouch) {
+            ImGui::BeginDisabled(running || bindMode != BindMode::None);
+            if (ImGui::Button("Bind Crouch")) {
+                inputHandler->BeginKeyBinding();
+                bindMode = BindMode::Crouch;
+            }
+            ImGui::EndDisabled();
+            if (bindMode != BindMode::None) {
                 ImGui::TextColored(ImVec4(1,1,0,1), "Press a key...");
-                KeyEvent evt;
-                if (inputHandler->PopEvent(evt)) {
-                    if (bindingJump) {
-                        jumpKey = evt.vkCode;
-                        GetKeyNameTextA(MapVirtualKeyA((UINT)jumpKey, 0) << 16, jumpKeyName, sizeof(jumpKeyName));
-                        bindingJump = false;
-                    } else if (bindingCrouch) {
-                        crouchKey = evt.vkCode;
-                        GetKeyNameTextA(MapVirtualKeyA((UINT)crouchKey, 0) << 16, crouchKeyName, sizeof(crouchKeyName));
-                        bindingCrouch = false;
-                    }
+                // Wait for binding to finish
+                if (!inputHandler->IsBinding()) {
+                    // Update the correct key and name
+                    jumpKey = inputHandler->GetJumpKey();
+                    crouchKey = inputHandler->GetCrouchKey();
+                    GetKeyNameTextA(MapVirtualKeyA((UINT)jumpKey, 0) << 16, jumpKeyName, sizeof(jumpKeyName));
+                    GetKeyNameTextA(MapVirtualKeyA((UINT)crouchKey, 0) << 16, crouchKeyName, sizeof(crouchKeyName));
+                    keysChanged = true;
+                    bindMode = BindMode::None;
                 }
             }
             ImGui::Separator();
+            // Only enable Start Trainer if both keys are set
+            bool canStart = jumpKey && crouchKey;
+            ImGui::BeginDisabled(!canStart && !running);
             if (ImGui::Button(running ? "Stop Trainer" : "Start Trainer")) {
-                running = !running;
+                if (running) {
+                    running = false;
+                    trainerLogic = std::make_unique<TrainerLogic>(); // Reset logic
+                } else if (canStart) {
+                    running = true;
+                    trainerLogic = std::make_unique<TrainerLogic>(); // Reset logic
+                }
             }
+            ImGui::EndDisabled();
             ImGui::End();
+        }
+
+        // If keys were changed, reset trainer logic and stop trainer
+        if (keysChanged) {
+            running = false;
+            trainerLogic = std::make_unique<TrainerLogic>();
+            keysChanged = false;
         }
 
         // Main trainer window (moveable)
@@ -150,7 +184,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
         ImGui::Text("Status: %s", running ? "Running" : "Stopped");
         ImGui::Text("Jump Key: %s", jumpKey ? jumpKeyName : "Not set");
         ImGui::Text("Crouch Key: %s", crouchKey ? crouchKeyName : "Not set");
-        if (running) {
+        if (running && jumpKey && crouchKey) {
             trainerLogic->RenderUI();
         } else {
             ImGui::Text("Press Start in Settings to begin training.");
