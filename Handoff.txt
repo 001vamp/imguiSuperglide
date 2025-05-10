@@ -1,0 +1,85 @@
+🧾 Superglide Trainer Handoff Template
+🗂️ Project Basics
+
+    Full project path on your machine?
+    C:\Dev\SuperglideTrainer\Fresh start
+
+    What game is this trainer built for?
+    Apex Legends
+
+    What is the trainer meant to do?
+    Help users practice and perfect the Superglide movement technique by providing real-time feedback, key binding, and timing analysis.
+
+⚙️ Technical Details
+
+    What GUI framework is used? (e.g., Dear ImGui)
+    Dear ImGui
+
+    What version/branch of ImGui is used? (e.g., docking, master)
+    Latest docking branch (multi-viewport enabled)
+
+    What rendering backend? (DirectX11, OpenGL, Vulkan?)
+    DirectX11
+
+    What window system? (Win32, GLFW, SDL?)
+    Win32
+
+    Is input tracking implemented? If so, using what?
+    Yes, via a custom InputHandler using Win32 keyboard hooks
+
+    What build system is used? (CMake + Ninja, MSVC, etc.)
+    CMake + Ninja
+
+    Which IDE or editor do you use? (Cursor, VS Code, VS 2022?)
+    Cursor (and/or VS Code)
+
+✅ Current Progress
+
+    What features are already working?
+    - Custom ImGui UI with docking and multi-viewport support
+    - Key binding and input tracking
+    - Real-time feedback and timing analysis for Superglide
+    - Overlay mode (transparent, always-on-top, borderless)
+
+    What features still need to be added or fixed?
+    - (Your input here, e.g., "Add more advanced analytics", "Improve overlay click-through", etc.)
+
+🛠️ Build Instructions
+
+    Exact terminal commands used to build the project:
+
+    cd "C:\Dev\SuperglideTrainer\Fresh start"
+    cmake -S . -B build
+    cmake --build build --config Release
+
+    Where is the final .exe output located?
+    C:\Dev\SuperglideTrainer\Fresh start\build\SuperglideTrainer.exe
+
+    Does it run without a console window? (yes/no)
+    Yes
+
+📁 File Structure Notes
+
+    Where is main.cpp located?
+    C:\Dev\SuperglideTrainer\Fresh start\src\main.cpp
+
+    Where are custom logic files (InputHandler, TrainerLogic, etc.)?
+    C:\Dev\SuperglideTrainer\Fresh start\src\
+
+    Where are ImGui files (imgui.cpp, etc.) located?
+    C:\Dev\SuperglideTrainer\Fresh start\src\
+
+    Where is CMakeLists.txt?
+    C:\Dev\SuperglideTrainer\Fresh start\CMakeLists.txt
+
+❗ Important Stuff to Tell Them
+
+    Anything they should not change or delete?
+    Do not delete or modify the custom UI/logic in InputHandler, TrainerLogic, or the main ImGui windows. Do not remove the backup_imgui folder (contains previous ImGui versions for safety).
+
+    Any external files they should keep (imgui.ini, backup_imgui, etc.)?
+    Keep imgui.ini (ImGui settings)
+    Keep backup_imgui (ImGui backup)
+
+    Any planned features or stretch goals they should know about?
+    (Your input here, e.g., "Add click-through overlay support", "Support for more games", etc.)

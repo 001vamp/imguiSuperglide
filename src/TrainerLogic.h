@@ -18,11 +18,7 @@ public:
     const std::string& GetFeedback() const { return m_feedback; }
     double GetCumulativePercent() const { return m_cumulativePercent; }
     bool IsAwaitingFPS() const { return m_awaitingFPS; }
-    void SetTargetFPS(double fps) {
-        m_targetFPS = fps;
-        m_frameTime = 1.0 / m_targetFPS;
-        m_awaitingFPS = false;
-    }
+    void SetTargetFPS(double fps);
 
     enum class State {
         Ready,
@@ -44,6 +40,7 @@ private:
     double m_targetFPS;
     double m_frameTime;
     bool m_awaitingFPS;
+    bool m_ignoreNextJump;
 
     // Key display
     std::string KeyName(WPARAM vk) const;

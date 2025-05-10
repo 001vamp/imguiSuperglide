@@ -5,7 +5,7 @@
 #include <fstream>
 
 TrainerLogic::TrainerLogic()
-    : m_state(State::Ready), m_attempt(0), m_cumulativePercent(0.0), m_lastDeltaMs(0.0), m_lastDeltaFrames(0.0), m_lastChance(0.0), m_feedback(""), m_targetFPS(0.0), m_frameTime(0.0), m_awaitingFPS(true)
+    : m_state(State::Ready), m_attempt(0), m_cumulativePercent(0.0), m_lastDeltaMs(0.0), m_lastDeltaFrames(0.0), m_lastChance(0.0), m_feedback(""), m_targetFPS(0.0), m_frameTime(0.0), m_awaitingFPS(true), m_ignoreNextJump(true)
 {
 }
 
@@ -17,16 +17,25 @@ void TrainerLogic::Update(InputHandler& input) {
         using namespace std::chrono;
         ULONGLONG sysTime = GetTickCount64();
         auto now = high_resolution_clock::now();
-        std::ofstream log("debug_log.txt", std::ios::app);
-        log << "[PROCESS] vkCode=" << (unsigned long)evt.vkCode
-            << " sysTime=" << sysTime
-            << " chronoTime=" << (long long)duration_cast<milliseconds>(now.time_since_epoch()).count()
-            << " eventTime=" << (long long)duration_cast<milliseconds>(evt.timestamp.time_since_epoch()).count() << std::endl;
+        // std::ofstream log("debug_log.txt", std::ios::app);
         if (m_state == State::Ready) {
             if (evt.vkCode == input.GetJumpKey()) {
+                if (m_ignoreNextJump) {
+                    // Ignore the first jump (starts the climb)
+                    m_ignoreNextJump = false;
+                    m_feedback = "Climb started. Now attempt the superglide!";
+                    continue;
+                }
                 m_jumpTime = evt.timestamp;
                 m_state = State::Jump;
                 m_feedback = "Awaiting Crouch...";
+            } else if (evt.vkCode == input.GetCrouchKey()) {
+                // If crouch is pressed while in Ready, check if jump is also held
+                if (input.GetJumpKey() && input.IsJumpKeyHeld()) {
+                    m_feedback = "Jump and Crouch pressed together! Try to press jump first, then crouch.";
+                } else {
+                    m_feedback = "Crouch pressed before jump. Try to press jump first, then crouch.";
+                }
             }
         } else if (m_state == State::Jump) {
             if (evt.vkCode == input.GetCrouchKey()) {
@@ -36,15 +45,12 @@ void TrainerLogic::Update(InputHandler& input) {
                 m_lastDeltaFrames = delta / m_frameTime;
                 std::ostringstream oss;
                 oss << std::fixed << std::setprecision(6);
-                oss << "[DEBUG] delta: " << delta << " s, frameTime: " << m_frameTime << " s, frames: " << m_lastDeltaFrames << ", chance: ";
                 double chance = 0.0;
                 if (m_lastDeltaFrames < 1.0) {
                     chance = m_lastDeltaFrames * 100.0;
                 } else if (m_lastDeltaFrames < 2.0) {
                     chance = (2.0 - m_lastDeltaFrames) * 100.0;
                 }
-                oss << chance << "\n";
-                oss << std::setprecision(6) << m_lastDeltaFrames << " frames have passed.\n";
                 // Calculate chance and feedback
                 if (m_lastDeltaFrames < 1.0) {
                     m_lastChance = m_lastDeltaFrames * 100.0;
@@ -63,6 +69,7 @@ void TrainerLogic::Update(InputHandler& input) {
                 m_attempt++;
                 m_cumulativePercent += m_lastChance;
                 m_state = State::Ready;
+                m_ignoreNextJump = true;
             } else if (evt.vkCode == input.GetJumpKey()) {
                 m_state = State::JumpWarned;
                 m_feedback = "Warning: Multiple jumps detected, results may not reflect ingame behavior.";
@@ -75,6 +82,7 @@ void TrainerLogic::Update(InputHandler& input) {
                 m_lastChance = 0.0;
                 m_feedback = "Double jump input, resetting.";
                 m_state = State::Ready;
+                m_ignoreNextJump = true;
             }
         }
     }
@@ -91,6 +99,7 @@ void TrainerLogic::RenderUI() {
             m_targetFPS = atof(fpsBuf);
             m_frameTime = 1.0 / m_targetFPS;
             m_awaitingFPS = false;
+            m_ignoreNextJump = true;
         }
         ImGui::End();
         return;
@@ -119,4 +128,11 @@ std::string TrainerLogic::KeyName(WPARAM vk) const {
     std::ostringstream oss;
     oss << "VK_" << std::hex << vk;
     return oss.str();
+}
+
+void TrainerLogic::SetTargetFPS(double fps) {
+    m_targetFPS = fps;
+    m_frameTime = 1.0 / m_targetFPS;
+    m_awaitingFPS = false;
+    m_ignoreNextJump = true;
 } 

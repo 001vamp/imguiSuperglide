@@ -29,6 +29,8 @@ public:
     // Event queue
     bool PopEvent(KeyEvent& evt);
 
+    bool IsJumpKeyHeld() const { return m_jumpKeyHeld; }
+
 private:
     static LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam);
     static HHOOK s_keyboardHook;
@@ -43,6 +45,10 @@ private:
 
     std::mutex m_queueMutex;
     std::queue<KeyEvent> m_eventQueue;
+
+    // Track held state to suppress repeated keydown events
+    bool m_jumpKeyHeld = false;
+    bool m_crouchKeyHeld = false;
 
     void HandleKey(WPARAM vkCode, bool pressed);
 }; 

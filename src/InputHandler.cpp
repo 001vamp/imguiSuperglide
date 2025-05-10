@@ -50,10 +50,7 @@ void InputHandler::HandleKey(WPARAM vkCode, bool pressed) {
     using namespace std::chrono;
     auto now = high_resolution_clock::now();
     ULONGLONG sysTime = GetTickCount64();
-    std::ofstream log("debug_log.txt", std::ios::app);
-    log << "[HOOK] vkCode=" << (unsigned long)vkCode << " pressed=" << (int)pressed
-        << " sysTime=" << sysTime
-        << " chronoTime=" << (long long)duration_cast<milliseconds>(now.time_since_epoch()).count() << std::endl;
+    // std::ofstream log("debug_log.txt", std::ios::app);
     if (m_binding) {
         if (m_waitingForJump && pressed) {
             m_jumpKey = vkCode;
@@ -69,9 +66,26 @@ void InputHandler::HandleKey(WPARAM vkCode, bool pressed) {
         return;
     }
     // Only push jump/crouch events
-    if ((vkCode == m_jumpKey || vkCode == m_crouchKey) && pressed) {
-        std::lock_guard<std::mutex> lock(m_queueMutex);
-        m_eventQueue.push({ vkCode, pressed, now });
+    if (vkCode == m_jumpKey) {
+        if (pressed) {
+            if (!m_jumpKeyHeld) {
+                m_jumpKeyHeld = true;
+                std::lock_guard<std::mutex> lock(m_queueMutex);
+                m_eventQueue.push({ vkCode, pressed, now });
+            }
+        } else {
+            m_jumpKeyHeld = false;
+        }
+    } else if (vkCode == m_crouchKey) {
+        if (pressed) {
+            if (!m_crouchKeyHeld) {
+                m_crouchKeyHeld = true;
+                std::lock_guard<std::mutex> lock(m_queueMutex);
+                m_eventQueue.push({ vkCode, pressed, now });
+            }
+        } else {
+            m_crouchKeyHeld = false;
+        }
     }
 }
 

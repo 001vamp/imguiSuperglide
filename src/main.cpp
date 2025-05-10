@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <windowsx.h>
 #include <d3d11.h>
 #include <tchar.h>
 #include "imgui.h"
@@ -31,16 +32,23 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 {
+    // Delete ImGui settings file so widgets always start at default position/size
+    DeleteFileA("imgui.ini");
+
     // Register window class
     WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, _T("SuperglideTrainer"), NULL };
     RegisterClassEx(&wc);
 
-    // Create a normal window (not transparent)
+    // Create a borderless, always-on-top, transparent window
     HWND hwnd = CreateWindow(
         wc.lpszClassName, _T("Superglide Trainer"),
-        WS_OVERLAPPEDWINDOW,
+        WS_POPUP, // Borderless
         100, 100, 900, 500,
         NULL, NULL, wc.hInstance, NULL);
+
+    // Make window always on top and layered (for transparency)
+    SetWindowLong(hwnd, GWL_EXSTYLE, GetWindowLong(hwnd, GWL_EXSTYLE) | WS_EX_TOPMOST | WS_EX_LAYERED);
+    SetLayeredWindowAttributes(hwnd, RGB(0,0,0), 0, LWA_COLORKEY); // Black is transparent
 
     // Initialize Direct3D
     if (!CreateDeviceD3D(hwnd))
@@ -58,7 +66,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
@@ -66,7 +76,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
     ImVec4 purple = ImVec4(0.45f, 0.25f, 0.75f, 1.0f);
     ImVec4 purpleAccent = ImVec4(0.60f, 0.35f, 0.90f, 1.0f);
     ImVec4 bgDark = ImVec4(0.10f, 0.08f, 0.15f, 1.0f);
+    ImVec4 transparent = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
     style.Colors[ImGuiCol_WindowBg] = bgDark;
+    style.Colors[ImGuiCol_ChildBg] = bgDark;
     style.Colors[ImGuiCol_TitleBg] = purple;
     style.Colors[ImGuiCol_TitleBgActive] = purpleAccent;
     style.Colors[ImGuiCol_Border] = purpleAccent;
@@ -85,16 +97,23 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
     style.Colors[ImGuiCol_CheckMark] = purpleAccent;
     // style.Colors[ImGuiCol_ProgressBarBg] = ImVec4(0.18f, 0.13f, 0.25f, 1.0f);
     // style.Colors[ImGuiCol_ProgressBar] = purpleAccent;
-    style.WindowRounding = 10.0f;
+    style.WindowRounding = 0.0f;
     style.FrameRounding = 8.0f;
     style.GrabRounding = 8.0f;
     style.ScrollbarRounding = 8.0f;
-    style.WindowBorderSize = 2.0f;
+    style.WindowBorderSize = 0.0f;
     style.FrameBorderSize = 1.0f;
     style.WindowPadding = ImVec2(18, 14);
     style.FramePadding = ImVec2(10, 6);
     style.ItemSpacing = ImVec2(10, 8);
     style.ItemInnerSpacing = ImVec2(8, 6);
+
+    // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
+        style.WindowRounding = 0.0f;
+        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+    }
 
     // Setup Platform/Renderer backends
     ImGui_ImplWin32_Init(hwnd);
@@ -140,7 +159,28 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
         ImGui_ImplWin32_NewFrame();
         ImGui::NewFrame();
 
-        // Main menu bar
+        // DockSpace host window for overlay, drag, and docking
+        ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+        ImGuiViewport* viewport = ImGui::GetMainViewport();
+        ImGui::SetNextWindowPos(viewport->Pos);
+        ImGui::SetNextWindowSize(viewport->Size);
+        ImGui::SetNextWindowViewport(viewport->ID);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+        window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, transparent);
+        ImGui::Begin("DockSpace Demo", nullptr, window_flags);
+
+        ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+        ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
+        dockspace_flags &= ~ImGuiDockNodeFlags_AutoHideTabBar; // Always show tab bar
+        ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+        ImGui::End();
+        ImGui::PopStyleColor();
+        ImGui::PopStyleVar(2);
+
+        // Main menu bar (optional, can be in DockSpace host or as a window)
         if (ImGui::BeginMainMenuBar()) {
             if (ImGui::BeginMenu("Settings")) {
                 showSettings = true;
@@ -149,11 +189,10 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
             ImGui::EndMainMenuBar();
         }
 
-        // Settings window
+        // Settings window (top-level)
         if (showSettings) {
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(18, 14));
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10.0f);
-            ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.13f, 0.10f, 0.18f, 1.0f));
             ImGui::Begin("Settings", &showSettings, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse);
             ImGui::TextColored(purpleAccent, "Key Bindings:");
             ImGui::Separator();
@@ -197,22 +236,23 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
                 }
             }
             ImGui::EndDisabled();
-            ImGui::PopStyleColor();
+            if (ImGui::Button("Reset Window Size/Pos")) {
+                HWND hwnd = (HWND)ImGui::GetMainViewport()->PlatformHandleRaw;
+                if (hwnd) {
+                    MoveWindow(hwnd, 100, 100, 900, 500, TRUE);
+                }
+            }
+            if (ImGui::Button("Exit")) {
+                HWND hwnd = (HWND)ImGui::GetMainViewport()->PlatformHandleRaw;
+                if (hwnd) PostMessage(hwnd, WM_CLOSE, 0, 0);
+            }
             ImGui::PopStyleVar(2);
             ImGui::End();
         }
 
-        // If keys were changed, reset trainer logic and stop trainer
-        if (keysChanged) {
-            running = false;
-            trainerLogic = std::make_unique<TrainerLogic>();
-            keysChanged = false;
-        }
-
-        // Main trainer window (modernized)
+        // Superglide Trainer window (top-level)
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(24, 18));
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 12.0f);
-        ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.13f, 0.10f, 0.18f, 1.0f));
         ImGui::Begin("Superglide Trainer", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse);
         ImGui::PushFont(NULL);
         ImGui::TextColored(purpleAccent, "Status: %s", running ? "Running" : "Stopped");
@@ -244,16 +284,23 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
             ImGui::Text("Press Start in Settings to begin training.");
         }
         ImGui::PopFont();
-        ImGui::PopStyleColor();
         ImGui::PopStyleVar(2);
         ImGui::End();
 
         // Rendering
         ImGui::Render();
-        const float clear_color_with_alpha[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
+        const float clear_color_with_alpha[4] = { 0.45f, 0.55f, 0.60f, 1.00f };
         g_pd3dDeviceContext->OMSetRenderTargets(1, &g_mainRenderTargetView, NULL);
         g_pd3dDeviceContext->ClearRenderTargetView(g_mainRenderTargetView, clear_color_with_alpha);
         ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+        // Update and Render additional Platform Windows
+        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        {
+            ImGui::UpdatePlatformWindows();
+            ImGui::RenderPlatformWindowsDefault();
+        }
+
         g_pSwapChain->Present(1, 0); // Present with vsync
     }
 
@@ -326,8 +373,39 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
         return true;
+
     switch (msg)
     {
+    case WM_NCHITTEST:
+    {
+        // Allow resizing from all edges/corners (8px border)
+        POINT pt;
+        pt.x = GET_X_LPARAM(lParam);
+        pt.y = GET_Y_LPARAM(lParam);
+        ScreenToClient(hWnd, &pt);
+
+        RECT rc;
+        GetClientRect(hWnd, &rc);
+        const int border = 8;
+
+        // Left
+        if (pt.x >= rc.left && pt.x < rc.left + border) {
+            if (pt.y >= rc.top && pt.y < rc.top + border) return HTTOPLEFT;
+            if (pt.y >= rc.bottom - border && pt.y < rc.bottom) return HTBOTTOMLEFT;
+            return HTLEFT;
+        }
+        // Right
+        if (pt.x >= rc.right - border && pt.x < rc.right) {
+            if (pt.y >= rc.top && pt.y < rc.top + border) return HTTOPRIGHT;
+            if (pt.y >= rc.bottom - border && pt.y < rc.bottom) return HTBOTTOMRIGHT;
+            return HTRIGHT;
+        }
+        // Top
+        if (pt.y >= rc.top && pt.y < rc.top + border) return HTTOP;
+        // Bottom
+        if (pt.y >= rc.bottom - border && pt.y < rc.bottom) return HTBOTTOM;
+        break;
+    }
     case WM_SIZE:
         if (g_pd3dDevice != NULL && wParam != SIZE_MINIMIZED)
         {
@@ -341,8 +419,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
             return 0;
         break;
     case WM_DESTROY:
-        PostQuitMessage(0);
+        ::PostQuitMessage(0);
         return 0;
     }
-    return DefWindowProc(hWnd, msg, wParam, lParam);
+    return ::DefWindowProc(hWnd, msg, wParam, lParam);
 } 

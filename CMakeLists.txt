@@ -20,6 +20,9 @@ set(SOURCES
     src/imgui_demo.cpp
     src/imgui_impl_win32.cpp
     src/imgui_impl_dx11.cpp
+    src/imgui_internal.h
+    src/imgui_impl_win32.h
+    src/imgui_impl_dx11.h
 )
 
 add_executable(SuperglideTrainer WIN32 ${SOURCES})
